@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -18,6 +19,7 @@ import org.junit.Test;
 
 public class LocacaoService {
 
+	private LocacaoDAO locacaoDAO;
 
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException {
 		if(usuario == null){
@@ -63,9 +65,13 @@ public class LocacaoService {
 		
 		//Salvando a locacao...	
 		//TODO adicionar método para salvar
+		locacaoDAO.salvar(locacao);
 		
 		return locacao;
 	}
 
+	public void setLocacaoDAO(LocacaoDAO dao){
+		this.locacaoDAO = dao;
+	}
 
 }
