@@ -6,15 +6,19 @@ import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.servicos.LocacaoService;
+import br.ce.wcaquino.servicos.matchers.DiaSemanaMatcher;
+import br.ce.wcaquino.servicos.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static br.ce.wcaquino.servicos.matchers.MatchersProprios.*;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -57,14 +61,15 @@ public class LocacaoServiceTest {
 
     @Test
     public void testeLocacao() throws Exception{
+        Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
         Usuario usuario = new Usuario("Usuario 1");
         List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0));
 
         Locacao locacao = service.alugarFilme(usuario, filmes);
 
         error.checkThat(locacao.getValor(), is(equalTo(5.0)));
-        error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-        error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+        error.checkThat(locacao.getDataLocacao(), ehHoje());
+        error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
     }
 
     @Test(expected = FilmeSemEstoqueException.class)
@@ -148,5 +153,21 @@ public class LocacaoServiceTest {
         Locacao resultado = service.alugarFilme(usuario, filmes);
 
         assertThat(resultado.getValor(), is(14.0));
+    }
+
+    @Test
+    public void naoDeveDevolverFilmesNoDomingo() throws FilmeSemEstoqueException, LocadoraException {
+        Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+        Usuario usuario = new Usuario("Usuario 1");
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0),
+                new Filme("Filme 2", 1, 4.0),
+                new Filme("Filme 3", 1, 4.0),
+                new Filme("Filme 4", 1, 4.0),
+                new Filme("Filme 5", 1, 4.0),
+                new Filme("Filme 6", 1, 4.0));
+        Locacao resultado = service.alugarFilme(usuario, filmes);
+
+        assertThat(resultado.getDataRetorno(), caiEm(Calendar.MONDAY));
+        assertThat(resultado.getDataRetorno(), caiNumaSegunda());
     }
 }
