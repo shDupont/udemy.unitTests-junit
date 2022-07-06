@@ -11,7 +11,9 @@ import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
@@ -56,9 +58,9 @@ public class LocacaoServiceTest {
     @Test
     public void testeLocacao() throws Exception{
         Usuario usuario = new Usuario("Usuario 1");
-        Filme filme = new Filme("Filme 1", 1, 5.0);
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0));
 
-        Locacao locacao = service.alugarFilme(usuario, filme);
+        Locacao locacao = service.alugarFilme(usuario, filmes);
 
         error.checkThat(locacao.getValor(), is(equalTo(5.0)));
         error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
@@ -68,17 +70,17 @@ public class LocacaoServiceTest {
     @Test(expected = FilmeSemEstoqueException.class)
     public void testLocacao_filmeSemEstoque() throws Exception {
         Usuario usuario = new Usuario("Usuario 1");
-        Filme filme = new Filme("Filme 1", 0, 5.0);
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 4.0));
 
-        Locacao locacao = service.alugarFilme(usuario, filme);
+        Locacao locacao = service.alugarFilme(usuario, filmes);
     }
 
     @Test
     public void testLocacao_usuarioVazio() throws FilmeSemEstoqueException {
-        Filme filme = new Filme("Filme 1", 1, 5.0);
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0));
 
         try {
-            Locacao locacao = service.alugarFilme(null, filme);
+            Locacao locacao = service.alugarFilme(null, filmes);
             Assert.fail();
         }  catch (LocadoraException e) {
             Assert.assertThat(e.getMessage(), is("Usuario vazio"));
@@ -97,5 +99,54 @@ public class LocacaoServiceTest {
         Locacao locacao = service.alugarFilme(usuario, null);
 
         System.out.println("Forma nova");
+    }
+
+    @Test
+    public void devePagar75NoFilme3() throws FilmeSemEstoqueException, LocadoraException {
+        Usuario usuario = new Usuario("Usuario 1");
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0),
+                new Filme("Filme 2", 1, 4.0),
+                new Filme("Filme 3", 1, 4.0));
+        Locacao resultado = service.alugarFilme(usuario, filmes);
+
+        assertThat(resultado.getValor(), is(11.0));
+    }
+    @Test
+    public void devePagar50NoFilme4() throws FilmeSemEstoqueException, LocadoraException {
+        Usuario usuario = new Usuario("Usuario 1");
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0),
+                new Filme("Filme 2", 1, 4.0),
+                new Filme("Filme 3", 1, 4.0),
+                new Filme("Filme 4", 1, 4.0));
+        Locacao resultado = service.alugarFilme(usuario, filmes);
+
+        assertThat(resultado.getValor(), is(13.0));
+    }
+
+    @Test
+    public void devePagar25NoFilme5() throws FilmeSemEstoqueException, LocadoraException {
+        Usuario usuario = new Usuario("Usuario 1");
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0),
+                new Filme("Filme 2", 1, 4.0),
+                new Filme("Filme 3", 1, 4.0),
+                new Filme("Filme 4", 1, 4.0),
+                new Filme("Filme 5", 1, 4.0));
+        Locacao resultado = service.alugarFilme(usuario, filmes);
+
+        assertThat(resultado.getValor(), is(14.0));
+    }
+
+    @Test
+    public void devePagar0NoFilme6() throws FilmeSemEstoqueException, LocadoraException {
+        Usuario usuario = new Usuario("Usuario 1");
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 4.0),
+                new Filme("Filme 2", 1, 4.0),
+                new Filme("Filme 3", 1, 4.0),
+                new Filme("Filme 4", 1, 4.0),
+                new Filme("Filme 5", 1, 4.0),
+                new Filme("Filme 6", 1, 4.0));
+        Locacao resultado = service.alugarFilme(usuario, filmes);
+
+        assertThat(resultado.getValor(), is(14.0));
     }
 }
