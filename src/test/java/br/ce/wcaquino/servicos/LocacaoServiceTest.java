@@ -5,9 +5,6 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
-import br.ce.wcaquino.servicos.LocacaoService;
-import br.ce.wcaquino.servicos.matchers.DiaSemanaMatcher;
-import br.ce.wcaquino.servicos.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
@@ -19,8 +16,6 @@ import java.util.Date;
 import java.util.List;
 
 import static br.ce.wcaquino.servicos.matchers.MatchersProprios.*;
-import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
-import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
