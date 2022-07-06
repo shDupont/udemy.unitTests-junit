@@ -13,11 +13,13 @@ import org.junit.Test;
 
 public class LocacaoService {
 
-	public String vpublica;
-	protected String protegida;
-	private String privada;
-	String sdefault;
-	public Locacao alugarFilme(Usuario usuario, Filme filme) {
+
+	public Locacao alugarFilme(Usuario usuario, Filme filme) throws Exception {
+
+		if(filme.getEstoque() == 0){
+			throw new Exception("Filme sem estoque");
+		}
+
 		Locacao locacao = new Locacao();
 		locacao.setFilme(filme);
 		locacao.setUsuario(usuario);
