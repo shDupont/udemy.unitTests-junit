@@ -4,5 +4,5 @@ import br.ce.dupont.entidades.Usuario;
 
 public interface SPCService {
 
-	public boolean possuiNegativacao(Usuario usuario);
+	boolean possuiNegativacao(Usuario usuario) throws Exception;
 }

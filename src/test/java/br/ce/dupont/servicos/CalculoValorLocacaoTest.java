@@ -15,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import br.ce.dupont.daos.LocacaoDAO;
@@ -23,11 +25,17 @@ import br.ce.dupont.entidades.Locacao;
 import br.ce.dupont.entidades.Usuario;
 import br.ce.dupont.exceptions.FilmeSemEstoqueException;
 import br.ce.dupont.exceptions.LocadoraException;
+import org.mockito.MockitoAnnotations;
 
 @RunWith(Parameterized.class)
 public class CalculoValorLocacaoTest {
 
+	@InjectMocks
 	private LocacaoService service;
+	@Mock
+	private LocacaoDAO dao;
+	@Mock
+	private SPCService spc;
 	
 	@Parameter
 	public List<Filme> filmes;
@@ -40,11 +48,7 @@ public class CalculoValorLocacaoTest {
 	
 	@Before
 	public void setup(){
-		service = new LocacaoService();
-		LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
-		service.setLocacaoDAO(dao);
-		SPCService spc = Mockito.mock(SPCService.class);
-		service.setSPCService(spc);
+		MockitoAnnotations.initMocks(this);
 	}
 	
 	private static Filme filme1 = umFilme().agora();
